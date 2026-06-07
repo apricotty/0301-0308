@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="一个观察中国社会的作家手记——0301与0308，两条岔路，一个闭环。">
+<title>0301与0308</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES
+   ============================================================ */
+:root {
+  --ink: #1a1a1a;
+  --ink-light: #4a4a4a;
+  --ink-muted: #7a7a7a;
+  --paper: #faf8f5;
+  --paper-warm: #f5f0e8;
+
+  --path-0301: #2c5f7c;
+  --path-0308: #8b3a3a;
+
+  --gold: #c4a35a;
+  --gold-faded: #d4c5a0;
+  --red-stamp: #c23b3b;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+  --text-4xl: 3.5rem;
+
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 6rem;
+  --space-2xl: 10rem;
+
+  --reading-width: 42rem;
+  --wide-width: 56rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', 'SimSun', 'STSong', serif;
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.85;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.03;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,0,0,0.02) 60px, rgba(0,0,0,0.02) 61px);
+  pointer-events: none;
+}
+
+/* Loading */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loading-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 3rem;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.15em;
+}
+.loading-code span { color: var(--ink-muted); }
+.loading-line {
+  width: 6rem;
+  height: 1px;
+  background: var(--ink);
+  margin: 1.5rem 0;
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+@keyframes loadingPulse {
+  0%, 100% { opacity: 0.3; transform: scaleX(1); }
+  50% { opacity: 1; transform: scaleX(1.5); }
+}
+
+/* Top bar */
+#top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 3px;
+  background: linear-gradient(90deg, var(--path-0301) 0%, var(--path-0301) 50%, var(--path-0308) 50%, var(--path-0308) 100%);
+  transform-origin: top;
+  transition: height 0.4s ease, background 0.4s ease;
+}
+#top-bar.expanded {
+  height: 48px;
+  background: var(--paper);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  backdrop-filter: blur(12px);
+}
+#top-bar-inner {
+  max-width: var(--wide-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#top-bar.expanded #top-bar-inner { opacity: 1; }
+#top-bar-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--ink-muted);
+  letter-spacing: 0.1em;
+}
+#top-bar-progress {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}
+
+/* Hero */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  position: relative;
+}
+#hero::before, #hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 20%, rgba(0,0,0,0.06) 80%, transparent 100%);
+}
+#hero::before { left: 15%; }
+#hero::after  { right: 15%; }
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  letter-spacing: 0.2em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+}
+.hero-title-main {
+  font-family: 'Noto Serif SC', serif;
+  font-size: clamp(3rem, 8vw, var(--text-4xl));
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-sm);
+}
+.hero-title-main .code-0301 { color: var(--path-0301); }
+.hero-title-main .code-0308 { color: var(--path-0308); }
+.hero-title-main .sep { color: var(--ink-muted); font-weight: 300; margin: 0 0.15em; }
+.hero-subtitle {
+  font-family: 'Noto Serif SC', serif;
+  font-size: var(--text-lg);
+  font-weight: 400;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-lg);
+}
+.hero-meta {
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hero-meta span { margin: 0 0.5em; }
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.5;
+  animation: scrollFloat 2s ease-in-out infinite;
+}
+.scroll-indicator span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.scroll-line { width: 1px; height: 2.5rem; background: var(--ink-muted); }
+@keyframes scrollFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* Preface */
+.preface-note {
+  max-width: var(--reading-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+}
+.preface-note-inner {
+  display: inline-block;
+  text-align: left;
+  border-left: 2px solid var(--gold-faded);
+  padding: var(--space-sm) var(--space-md);
+}
+.preface-note p {
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  line-height: 1.7;
+}
+
+/* Chapter */
+.chapter {
+  max-width: var(--reading-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  position: relative;
+}
+.chapter-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--ink-muted);
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-xs);
+}
+.chapter-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-lg);
+  color: var(--ink);
+}
+.chapter:first-of-type .chapter-body p:first-of-type::first-letter {
+  float: left;
+  font-size: 4em;
+  font-weight: 900;
+  line-height: 0.8;
+  padding-right: 0.12em;
+  padding-top: 0.04em;
+  color: var(--ink);
+}
+.chapter-body p {
+  text-indent: 2em;
+  margin-bottom: 0.75em;
+  font-weight: 400;
+}
+.chapter-body p.no-indent { text-indent: 0; }
+
+/* Pull quotes */
+.pull-quote {
+  max-width: calc(var(--reading-width) + 6rem);
+  margin: var(--space-lg) auto;
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+  position: relative;
+}
+.pull-quote::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3rem;
+  height: 1px;
+  background: var(--gold);
+}
+.pull-quote p {
+  font-family: 'Noto Serif SC', serif;
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-indent: 0;
+}
+.pull-quote .attribution {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  margin-top: var(--space-sm);
+}
+
+/* Scene break */
+.scene-break {
+  text-align: center;
+  margin: var(--space-lg) 0;
+  letter-spacing: 0.3em;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  opacity: 0.5;
+}
+
+/* Stamp */
+.stamp {
+  display: inline-block;
+  border: 1.5px solid var(--red-stamp);
+  color: var(--red-stamp);
+  padding: 0.15em 0.5em;
+  font-family: 'Noto Serif SC', serif;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+  transform: rotate(-2deg);
+}
+
+/* Code inline */
+code.path-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  font-weight: 500;
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+code.path-0301 { color: var(--path-0301); background: rgba(44,95,124,0.06); }
+code.path-0308 { color: var(--path-0308); background: rgba(139,58,58,0.06); }
+
+/* Dialogue */
+.dialogue-block {
+  max-width: var(--reading-width);
+  margin: var(--space-md) auto;
+  padding-left: var(--space-md);
+  border-left: 1px solid rgba(0,0,0,0.1);
+}
+.dialogue-block p {
+  text-indent: 0;
+  margin-bottom: 0.4em;
+  font-size: 0.95em;
+}
+
+/* Glass motif */
+.glass-motif {
+  max-width: var(--reading-width);
+  margin: var(--space-lg) auto;
+  padding: var(--space-md);
+  border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(0,0,0,0.015);
+  border-radius: 1px;
+  text-align: center;
+  position: relative;
+}
+.glass-motif::before {
+  content: '防弹玻璃';
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-muted);
+  background: var(--paper);
+  padding: 0 0.5rem;
+}
+.glass-motif p {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  text-indent: 0;
+  font-style: italic;
+}
+
+/* Coda */
+#coda {
+  max-width: var(--reading-width);
+  margin: var(--space-2xl) auto var(--space-xl);
+  padding: 0 var(--space-md);
+  text-align: center;
+}
+.coda-final {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  letter-spacing: 0.15em;
+  color: var(--ink-muted);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+.coda-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: var(--space-lg) 0;
+}
+.coda-lines p {
+  font-family: 'Noto Serif SC', serif;
+  font-size: var(--text-lg);
+  font-weight: 400;
+  text-indent: 0;
+  line-height: 1.8;
+}
+.final-seal {
+  display: inline-block;
+  margin: var(--space-lg) auto;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--red-stamp);
+  color: var(--red-stamp);
+  font-family: 'Noto Serif SC', serif;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  transform: rotate(-1deg);
+}
+
+/* Memorandum */
+#memorandum {
+  max-width: var(--reading-width);
+  margin: var(--space-2xl) auto var(--space-xl);
+  padding: var(--space-lg) var(--space-md);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+}
+#memorandum h2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--ink-muted);
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+}
+#memorandum h3 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink);
+  margin: var(--space-md) 0 var(--space-xs);
+  letter-spacing: 0.04em;
+}
+#memorandum p, #memorandum li {
+  font-size: var(--text-sm);
+  color: var(--ink-light);
+  line-height: 1.7;
+}
+#memorandum ul { list-style: none; padding: 0; }
+#memorandum ul li::before { content: '·'; margin-right: 0.5em; color: var(--ink-muted); }
+
+/* Progress bar */
+#progress-bar-container {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 100;
+  background: transparent;
+}
+#progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--path-0301), var(--path-0308));
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: var(--space-lg) var(--space-md);
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  letter-spacing: 0.06em;
+}
+footer .codes {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin-bottom: var(--space-xs);
+}
+footer .codes span.code-0301 { color: var(--path-0301); }
+footer .codes span.code-0308 { color: var(--path-0308); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  :root {
+    --text-base: 1rem;
+    --text-lg: 1.1rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.75rem;
+    --text-4xl: 2.25rem;
+    --space-lg: 2.5rem;
+    --space-xl: 3.5rem;
+    --space-2xl: 5rem;
+  }
+  .chapter-title { font-size: var(--text-2xl); }
+  .chapter-body p { text-indent: 1.5em; }
+  #hero::before, #hero::after { display: none; }
+  .pull-quote { padding: var(--space-md) var(--space-sm); }
+  .pull-quote p { font-size: var(--text-lg); }
+}
+@media (max-width: 480px) {
+  :root { --text-base: 0.95rem; --space-md: 1.25rem; }
+  .hero-title-main { font-size: 2rem; }
+  .chapter-body p { text-indent: 1.2em; }
+}
+
+/* Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.pull-quote.reveal { transition-delay: 0.1s; }
+
+@media print {
+  body { font-size: 11pt; line-height: 1.6; }
+  #top-bar, #progress-bar-container, .scroll-indicator, #loading-screen { display: none !important; }
+  .chapter { break-inside: avoid; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-code">0301<span>&nbsp;</span>0308</div>
+  <div class="loading-line"></div>
+  <div style="font-family:'Noto Sans SC',sans-serif;font-size:0.75rem;color:var(--ink-muted);letter-spacing:0.1em;">正在调阅案卷</div>
+</div>
+
+<!-- TOP BAR -->
+<div id="top-bar">
+  <div id="top-bar-inner">
+    <span id="top-bar-title">案件编号 2025-2054</span>
+    <span id="top-bar-progress"></span>
+  </div>
+</div>
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<section id="hero">
+  <div class="hero-eyebrow">中国本科专业目录 · 法学类</div>
+  <h1 class="hero-title-main">
+    <span class="code-0301">0301</span><span class="sep">与</span><span class="code-0308">0308</span>
+  </h1>
+  <p class="hero-subtitle">——一个观察中国社会的作家手记</p>
+  <div class="hero-meta">
+    虚构作品<span>&nbsp;·&nbsp;</span>人名地名纯属巧合<span>&nbsp;·&nbsp;</span>制度细节均经核实
+  </div>
+  <div class="scroll-indicator">
+    <span>开始阅读</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     PREFACE
+     ========================================================= -->
+<div class="preface-note reveal">
+  <div class="preface-note-inner">
+    <p>本文综合四个 AI（豆包、Gemini、Claude、GPT）的版本，保留各版精华：豆包的双线腐败叙事与留置室对峙、Gemini 的制度细节与培养方案断层、Claude 的“两条路宽度不同”结构与诙谐语调、GPT 的“成功者的困惑”哲学深度。人物命名沿用豆包修改版（王哲 / 李默），时间跨度三十余年，所有制度性细节——专业代码、法考资格、考公口径、监察程序——均经核实。人名地名纯属虚构。</p>
+  </div>
+</div>
+
+<!-- =========================================================
+     一、岔路
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">一</div>
+  <h2 class="chapter-title">岔路</h2>
+  <div class="chapter-body">
+
+    <p>2027 年 6 月。东北的一所省属重点大学。</p>
+
+    <p>纪检监察学院门口挂着两条横幅。第一条是“热烈祝贺我校获批纪检监察学一级学科博士点”，红底黄字，已经挂了一年，风吹日晒，颜色褪了不少。第二条是“欢送 2027 届毕业生”，崭新，前一天晚上才挂上去的。李默路过的时候觉得，两条横幅一旧一新挂在一起，有一种说不上来的荒诞感，但她没有把这个想法告诉任何人。</p>
+
+    <p>同寝室的王哲不觉得荒诞。他站在横幅下面，用手机拍了一张照片，发在朋友圈里，配文是四个字：与党同行。李默在下面点了个赞。</p>
+
+    <p>两人同属这所学校第一届纪检监察本科生，彼时都拿到了保研资格。李默的绩点是 3.8，王哲是 3.7，在这个课程方案年年微调、任课老师自己也在边教边学的学院里，已经算名列前茅。真正的分岔不在绩点上，而在一次动员大会之后。</p>
+
+    <p>动员大会是副院长主持的，他站在讲台上，身后的投影幕布上打着一行字：“纪检监察学——新时代的战略性学科”。他讲了很多，讲国家治理，讲全面从严治党，讲学科的历史机遇，讲未来十年的人才缺口。台下一百多名学生，有人在做笔记，有人在刷手机，有人在谈恋爱。王哲坐在第一排，从头听到尾，中途还站起来提了一个问题，关于纪检监察学的学科边界和研究方法。副院长回答得很认真，大意是这个学科还处在构建过程中，正是需要年轻人的时候。王哲坐下的时候眼神发亮，仿佛已经看到了学位证书上“纪检监察学”四个字下面的烫金边框。</p>
+
+    <p>李默坐在倒数第三排靠窗的位置。她没有提问。她在手机上查了三样东西：法律职业资格考试报名条件、近三年各省公务员招考目录中法学类岗位的专业代码要求，以及某政法大学宪法与行政法学专业的导师简介。查完之后她关掉手机，在教室后排坐了很久，阳光透过窗户照在她的笔记本上，没有字。</p>
+
+    <p>晚上回到宿舍，王哲滔滔不绝。他说：“副院长说了，全国已经有二十多所高校成立了纪检监察学院，未来还会更多。这是专业对口，这是政策红利，这跟当年知识产权专业入目录的时候一模一样——你想想，第一批知产专业的毕业生现在都在哪儿？”</p>
+
+    <p>李默没有接话。她在台灯下翻着一本从图书馆借来的行政法教材，翻到某一页的时候停了下来。那一页是行政复议的程序图，密密麻麻的箭头和框线。她盯着那张图看了很久，然后说了一句话——</p>
+
+  </div>
+</section>
+
+<div class="pull-quote reveal">
+  <p>“0308 的事我看不太懂。<br>我只知道 0301 考公岗位多，而且本硕一致。”</p>
+</div>
+
+<section class="chapter reveal">
+  <div class="chapter-body">
+
+    <p>王哲笑了。他笑起来的样子很真诚，不是嘲讽，是真的觉得李默想多了。“你这是自己吓自己，”他说，“纪检监察是法学门类下的，学位证上写的也是法学硕士，考公自不必说，纪委监委系统难道不收纪检监察专业的学生？那不是天大的笑话？”</p>
+
+    <p>李默没有争辩。她合上了书，关了台灯，在黑暗中睁着眼睛躺了一会儿，然后说：“那如果你考了纪检监察学的硕士，毕业以后想做法官呢？”</p>
+
+    <p>王哲沉默了几秒钟。然后说：“我为什么要做法官？我本来就是学纪检的。”</p>
+
+    <p>“对，”李默在黑暗里说，“这就是我想说的。”</p>
+
+    <p>屋里安静了很久。走廊尽头传来水房的声音，有人在水龙头下冲方便面的碗。</p>
+
+    <p>三个月后，李默去了北京，政法大学的宪法与行政法学（<code class="path-code path-0301">030103</code>）。王哲留在了本校，纪检监察学硕士（<code class="path-code path-0308">030800</code>）。他是这个硕士点第三届招生中的一员——前三届加起来不到四十个人，连一个像样的导师组都凑不齐，但王哲不在意。他在日记本第一页写下了“全国第一批纪检监察学科硕士”这几个字，字迹端正，笔画有力，像一个旗手在旗帜上绣上番号。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     二、爬升
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">二</div>
+  <h2 class="chapter-title">爬升</h2>
+  <div class="chapter-body">
+
+    <p>接下来十五年的故事，可以从两张学位证书开始讲起。</p>
+
+    <p>李默的证书上印着“法学硕士”，括号里是“宪法与行政法学”，证书编号以 <code class="path-code path-0301">0301</code> 开头。这张证书没有让她成为任何人上人，但她参加省考的时候，资格审核那一栏被顺利勾过，没有一个人问她“宪行是什么”。她进了广东省某市中级人民法院，从书记员做起，五年升助理审判员，又五年升审判员，第十五年调任广州知识产权法院，任审判委员会委员、行政审判庭庭长。法考证从研一那年就压在抽屉里。不是什么了不起的事。</p>
+
+    <p>王哲的证书上也印着“法学硕士”，括号里是“纪检监察学”，学科代码以 <code class="path-code path-0308">0308</code> 开头。这张证书把他送进了老家的县纪委监委——走的不是省考，而是纪委监委系统的专项选调生通道。在 2028 年的这个通道里，“纪检监察学”确实是唯一一个被明确点名的专业方向。王哲拿到录用通知书的时候，心里默念了一句话：我早就说过。</p>
+
+    <p>从县纪委监委到市纪委监委，再到省纪委监委案件审理室，王哲用了十二年。他写的审理报告在系统里小有名气，结构严整，引用规范，政纪衔接的部分尤其精准——因为他上过第一线，知道那些材料是怎么来的、哪些证据经得起推敲、哪些只是在谈话室里被诱导签下的。他在审理室副主任的位置上被人称为<span class="stamp">铁门槛</span>，意思是所有要报常委会审议的处分案件，到了他这里都得先过一关。</p>
+
+    <p>第十二年的时候，他已经很累了。</p>
+
+    <p>不是身体累。是某种更深的东西。他审过的案子里，有真腐败的，也有站错队的，有证据确凿到无可辩驳的，也有证据链条若隐若现、但上面打了招呼必须处分到位的。他知道这里面的区别，但他不能说。铁门槛的意思，有时候不是把不合格的拦住，而是让所有进来的都看起来合格了。</p>
+
+    <p>他把这种感觉写成过一篇文章，题目叫《监察处置证据审查的规范构造》，投给了一家新创刊的纪检监察学期刊。文章被录用了，还获了奖。颁奖那天他坐在会场里，看着台上“纪检监察学优秀成果奖”的横幅，忽然想起十五年前副院长说的那句话——“你们是历史的参与者”。他确实是。只是他没想过，参与历史的方式是让那些经不起推敲的案件看起来像那么回事。</p>
+
+    <p>会后他和李默发了一条微信：“拿了个奖，发在了纪检监察学的新刊上。”</p>
+
+    <p>李默回得很快：“恭喜。知产法院这边太忙了，迟复为歉。”</p>
+
+    <p>王哲发了一个笑脸，李默回了一个握手的表情。</p>
+
+    <p>这是他们五年来第一次直接的文字交流。上一次还是五年前，在校友群里互相祝福新年。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     三、裂缝
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">三</div>
+  <h2 class="chapter-title">裂缝</h2>
+  <div class="chapter-body">
+
+    <p>李默的裂缝比王哲的来得晚，但更彻底。</p>
+
+    <p>广州知识产权法院的案件量和标的额这些年都涨得吓人。她手上的案件排期已经到了下个季度，每一个案件都涉及到钱，很多钱。NPE 诉讼、标准必要专利 FRAND 费率裁定、反垄断与知识产权滥用的交叉诉讼——这些东西她在学校里从来没有学过。她学的是宪法、行政法、行政诉讼法，到了知产法院以后全部从头补课。</p>
+
+    <p>这种补课不是坏事。她本来就喜欢学东西。问题是，她在补了五年知产法之后，开始注意到一些规律。有些律所代理的案件，胜诉率异常地高。有些评估机构出具的损害赔偿评估报告，几乎每次都出现在自由裁量幅度的上限附近。还有些看起来互不相关、律师不一样的案件，背后的原告其实是同一家专利聚合公司的不同壳实体。</p>
+
+    <p>这些事情都不是秘密。圈子里的人都知道。只是没有人说破。知识产权本身就是一套在技术、法律和商业之间运作的规则系统，规则越细，灰色的空间越多，而灰色的空间定价权从来不是法官说了算的。法官只管判决，判决之后的事情——执行、和解、许可谈判、市场定价——跟法院无关。但李默知道，她写下的每一条 FRAND 费率裁定，都会影响下一个案件的和解报价，进而影响整个行业的博弈格局。她不是在判案子，她是在给一个隐形的市场定价。</p>
+
+    <p>这是权力吗？</p>
+
+    <p style="text-indent:0;text-align:center;font-weight:500;">是。</p>
+
+    <p>跟她当年在行政法教材里学到的任何一种行政权力都不一样。没有红头文件，没有行政处罚决定书，没有规范化审查。只有一个又一个判决书末尾的“如不服本判决，可在判决书送达之日起十五日内向本院递交上诉状”，以及那行字下面她的签名。</p>
+
+    <p>有一天晚上她在办公室加班，翻开了一本新到的《中国法学》，目录页上有一篇论文的标题让她停了下来：《司法定价与行政定价的比较研究——以知识产权 FRAND 费率裁定为例》。作者不认识，是北大法学院的年轻副教授。文章的结论之一是：司法定价行为本质上是行政规制行为的一种替代形式，但缺乏行政程序的程序性约束。</p>
+
+    <p>她读了三遍最后一句话：“<strong>缺乏行政程序的程序性约束</strong>”。</p>
+
+    <p>窗外是珠江新城的灯光。她想，三十年以后，如果有人认真研究她经手的这些判决，会不会发现某些规律的异常？如果发现了，又会怎么判断？</p>
+
+    <p>她关掉了电脑。打开手机看了一眼校友群，铺天盖地的未读消息。有人在讨论最近落马的那个省纪委书记，涉案金额还在统计，初步估计超过了三十个亿，涉及土地、工程、人事任免和司法干预。</p>
+
+    <p>她划了划手机，心里闪过一丝完全无关的念头：这个案子的材料，估计是先送到监察委的审理室。审理室会有一个类似“铁门槛”的人来审。</p>
+
+    <p>铁门槛。她忽然笑了一下。</p>
+
+    <p>王哲当年在审理室被人起了这个外号，是在校友会上听别人说的。那时候她觉得这个外号有点夸张。现在她觉得，外号这种东西往往比当事人的自我认知更接近真相。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     四、拐点
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">四</div>
+  <h2 class="chapter-title">拐点</h2>
+  <div class="chapter-body">
+
+    <p>如果这个故事到此为止，李默继续在广州判案，王哲继续在省纪委审理案件，两个人偶尔在校友群里说两句话，各自在各自的体制内轨道上滑行直到退休——那这个故事不值得写下来。世界上充满了这种平行线，它们永远不相交，也没什么好看。</p>
+
+    <p>转折发生在 2052 年。准确地说，是 2052 年的清明节前后。</p>
+
+    <p>中央纪委国家监委发布了当年第四号通报：某省人大常委会原副主任、原省纪委书记严重违纪违法被开除党籍和公职。通报只列了主要问题，用的是惯常的措辞——“利用职务便利为他人谋取利益”“收受巨额财物”“干预和插手司法活动”“对抗组织审查”。但熟悉的人都知道，最后一条“对抗组织审查”通常意味着这个案子还没有结束。</p>
+
+    <p>当晚王哲的书房里，灯光一直亮到凌晨三点。</p>
+
+    <p>他的手机相册里有一张截图，是三个月前他在省纪委某次内部会议上看到的一份人员调整方案。方案里有一行用红字标注的新增内容，大意是建议对近年来的重大涉纪涉法交叉案件进行复查，重点复查案件中是否存在<strong>审理环节的倾向性问题</strong>。</p>
+
+    <p>他是审理室主任。</p>
+
+    <p>他在书房里坐了半宿，没有开灯，只有手机屏幕的光照着他的脸。他想起他刚进审理室的时候，经手的第一个案子是一个乡镇党委书记的违规审批问题。案情很简单，证据很充分，他写的审理报告引用了十几条法规，逻辑严密，连老主任都夸他“有悟性”。后来他才知道，那个案子之所以被送到审理室，是因为有人在常委会上保不住那个镇书记，需要一个看起来合法的程序来落地。他写的那份严密的审理报告，本质上只是在别人掘好的墓穴里放上第一锹土。</p>
+
+    <p>他从那个时候就开始知道，程序正义这件事，在谈心室里和在审理室里是两个概念。前者是纪律，后者是尺度。尺度放在谁手里，谁就拥有一部分自由裁量的权力。而自由裁量的权力放在一个起步阶段的年轻干部手里，会慢慢教会他两样东西：第一，这件事大家都在做，没什么好愧疚的；第二，你只要把字签在合适的位置，没有人会发现——就算发现了，也是“工作失误”，不是“主观故意”。</p>
+
+    <p>他确实做到了一度无人发现。</p>
+
+    <p>但也只是一度。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     五、留置
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">五</div>
+  <h2 class="chapter-title">留置</h2>
+  <div class="chapter-body">
+
+    <p>李默收到借调通知的时候，正在法院食堂吃午饭。</p>
+
+    <p>借调单位是最高人民检察院新成立的某专案组，借调岗位是专案审查员，借调期限暂定六个月。通知上没有写具体案件的名称，只写了一个案件编号和一句“涉及国家工作人员重大职务犯罪案件”的概括描述。李默是江西人，还带着一点客家口音。她的专业知识领域是行政法和知识产权，跟职务犯罪基本不搭边。她看见通知的时候，心里有些疑惑。</p>
+
+    <p>直到她在专案组的第一份材料简报上看到了一个名字。</p>
+
+    <p>她没有失态。不是因为克制，而是因为大脑短暂地拒绝处理这条信息。她坐在会议桌旁，其他人陆续落座，把笔记本电脑打开，有人在介绍案情背景。她端着杯子，一口气喝掉了大半杯水。她想起自己最后一次见王哲，是在校友会的聚会上。那个时候王哲已经是省纪委的中层干部，身材发福了，鬓角白了，但气场跟大学时完全不一样。他说话变慢了，每一个字都像是从公文纸上裁下来的，少了大学时可以连续吹一个中午不停歇的酣畅锐气，多了一种“看透了一切”的沉稳和疏离。那天晚上他们喝了几杯啤酒，谈论的话题是纪检监察学科建设，王哲语气平静地说“学科发展得还行，就是学生报到的越来越少”。李默当时觉得这句话是客观陈述，现在回忆起来才发现话里的温度很低，低到接近零度。</p>
+
+    <p>现在这个人就在留置室里。而她坐在专案组会议桌旁，即将参与审讯他的每一个细节。</p>
+
+    <p>接下来的三个月，李默参与了全部三十七次审讯。</p>
+
+    <p>王哲的态度分成三个阶段。第一个阶段是沉默，什么都不说。第二个阶段是选择性交代，只承认一些“工作失误”层面的问题——在审理报告中引用法规不够严谨、对个别案件的证据审查把关不严、公务接待中偶有超标行为。到了第三个阶段，他的防线全线崩溃，开始交代实质性问题：利用案件审理权收受当事人贿赂并向行贿人透露调查进度；在土地和工程领域为特定利益相关方提供审查便利；利用职务影响力干预干部选拔任用为他人谋取职务晋升；收受礼金和有价证券，总价值超过两千万。</p>
+
+    <p>两千多万。</p>
+
+    <p>李默在审讯笔录上签字的时候，突然想起一件事。</p>
+
+    <p>大三那年，学院请了一位从省纪委退休的老同志来讲座。课后有个学生问：“如果在办案过程中遇到阻力怎么办？”老同志想了想说：“最大的阻力从来不在外面。最大的阻力是你的同事，你的上级，甚至是你自己。”</p>
+
+    <p>当时她觉得这句话很深奥。现在她才明白，那位老同志不是在说道理，他是在描述事实。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     六、辨认
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">六</div>
+  <h2 class="chapter-title">辨认</h2>
+  <div class="chapter-body">
+
+    <p>审讯的最后一天，李默让其他人都出去，留置室里只剩下她和王哲两个人。</p>
+
+    <p>监控关了。同步录音录像也关。这是专案组组长默许的——他们曾经是同班同学，这个关系在专案组不是秘密。</p>
+
+    <p>王哲比三个月前瘦了两圈，法令纹深如刀刻，但精神看起来还好。他穿着留置人员的统一服装坐在椅子上，没有镣铐，双手放在膝盖上。</p>
+
+  </div>
+</section>
+
+<div class="dialogue-block reveal">
+  <p>“你的辩护人请好了吗？”李默问。</p>
+  <p>“请了。”</p>
+  <p>“请的谁？”</p>
+  <p>“你认识。当年我们俩一起上过他的课。”</p>
+  <p>李默想了一会儿。“是朴老师。宪法学的那个。”</p>
+  <p>“对。”王哲说，“他今年七十六了。我打电话给他的时候，他沉默了很久，然后说‘我当年教你们宪法的第一堂课就讲过，一切权力都必须受到约束。我没有做到让你们记住这句话。是我的错’。”</p>
+</div>
+
+<section class="chapter reveal">
+  <div class="chapter-body">
+
+    <p>李默没有说话。窗外的走廊里传来脚步声，有人走过去，又安静下来。</p>
+
+    <p>“我一直在想一个问题，”王哲说，“如果当年我听你的，跟你一起报宪行，现在会不会不一样？”</p>
+
+    <p>李默看着他，忽然也问了一个问题：“你知道我也可能坐在这里吗？”</p>
+
+    <p>王哲愣住了。</p>
+
+    <p>“知识产权法院的判决，”李默说，“我判过全国最高的赔偿额，也批过最低的许可费率。那些判决影响的商业利益，比我收的任何一次贿赂都要大得多。我需要解释的不是我收了多少钱——我没收——而是在那些判决之后，为什么恰好是某几家律所和某几个评估机构的客户赢了。”</p>
+
+    <p>她停了一下。</p>
+
+    <p>“这个解释，我到现在也给不出来。”</p>
+
+    <p>王哲盯着她看了很久，像是在看一个完全不认识的人。</p>
+
+    <p>然后他说了一句话，这句话后来写进了李默的回忆录初稿，后来又被她自己删掉了——</p>
+
+  </div>
+</section>
+
+<div class="pull-quote reveal">
+  <p>“你以为你比我干净。<br>可是干不干净这种事，<br>从来不取决于我们自己觉得。”</p>
+  <div class="attribution">——王哲，留置室</div>
+</div>
+
+<section class="chapter reveal">
+  <div class="chapter-body">
+
+    <p>李默站起来，走向门口。</p>
+
+    <p>“我确实不比你干净，”她在门口回头说，“但至少我没有把同学写进审理报告里，然后放在抽屉里备用。”</p>
+
+    <p>王哲的脸在一瞬间失去了所有的血。</p>
+
+    <p>他从留置开始到现在，第一次流露出了真正恐惧的表情。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     七、结局
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">七</div>
+  <h2 class="chapter-title">结局</h2>
+  <div class="chapter-body">
+
+    <p>“备用”这句话是什么意思呢？</p>
+
+    <p>三个月后，王哲的案子移送审查起诉。案卷里有一份附件材料，是专案组在搜查王哲住所时发现的。材料放在他书房的保险柜里，装在一个写着“个人备用资料”的文件袋中。文件袋里有一份已经写好的举报材料草稿，被举报人的姓名是李默。材料内容涉及李默在知识产权法院审理案件期间的可疑判决、与特定律所的非正常接触，以及一次境外学术会议上与境外律所代表的可疑往来。材料的末尾没有写明日期，草稿用的是省纪委的公用信笺，最后一页的右下角有一行用铅笔写的字迹——</p>
+
+    <p style="text-indent:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.9em;letter-spacing:0.05em;margin:var(--space-md) 0;">“暂不发出。先观察。”</p>
+
+    <p>李默看到这份材料的时候，把这一页放在桌上，看了很久。她几乎同时意识到一件事：这份材料不是为她一个人准备的。那些证据的搜集需要大量的人力，需要调阅知产法院多年以来的判决档案，需要比对律所与当事人之间的代理关系变迁，需要细致到每一个签字和每一笔代理费的跟踪——这不是一个人能做到的。这不是王哲一个人能调动的资源，背后必然还有其他人。而他保留了这份材料，她永远不知道他保留的动机是什么——是为了关键时刻保护自己，是打算在某个节点把她拉下水，还是仅仅因为他下不了手。</p>
+
+    <p>她永远不会知道了。</p>
+
+  </div>
+</section>
+
+<div class="glass-motif reveal">
+  <p>2107233-CL-2025-JC-003</p>
+  <p style="font-size:0.75rem;margin-top:0.5rem;">此页有意留白。某些问题没有答案。</p>
+</div>
+
+<section class="chapter reveal">
+  <div class="chapter-body">
+
+    <p>2054 年，王哲因受贿罪、滥用职权罪、巨额财产来源不明罪被判处无期徒刑，剥夺政治权利终身。李默没有被追诉。那份举报材料经过审查，里面的核心事实指向只够构成“可能存在违纪行为”的初步质疑，达不到立案标准。但她在知产法院的任职被悄悄结束了——没有处分，没有通报，只是提前退休。</p>
+
+    <p>退休那天，她收拾办公室的时候，在柜子最底层发现了一个牛皮纸信封，里面装的是大学时的笔记本。</p>
+
+    <p>她翻开笔记本的第一页。</p>
+
+    <p>上面是她自己的字迹，记录的是大四那年保研动员大会的内容。副院长的讲话要点被她用黑色水笔记了下来，旁边是她用红色水笔做的批注。</p>
+
+    <p>黑色字写的是：“0308 纪检监察学——国家战略需求——学科发展前景广阔——人才缺口巨大”。</p>
+
+    <p>红色字写的是：“<strong>那毕业以后具体干什么呢？</strong>”</p>
+
+    <p>她盯着这行红色小字，站了很久。</p>
+
+    <p>窗外，珠江新城的阳光照在玻璃幕墙上，反射出一片刺眼的白光。</p>
+
+    <p>她把笔记本放回信封里，扔进了垃圾桶。然后她拿出手机，翻到一个已经注销的手机号——那是王哲被捕前的号码。她对着那串东北归属地的号码看了很久，最终没有自言自语，也没有掉眼泪。</p>
+
+    <p>她只是把手机翻过来，扣在了桌上。</p>
+
+    <p>声音在空旷的办公室里，轻得像一声叹息。</p>
+
+  </div>
+</section>
+
+<div class="scene-break">— —</div>
+
+<!-- =========================================================
+     尾声
+     ========================================================= -->
+<section class="chapter reveal">
+  <div class="chapter-number">&nbsp;</div>
+  <h2 class="chapter-title">尾声</h2>
+  <div class="chapter-body">
+
+    <p>2025 年的那个夏夜，两个二十出头的年轻人同时做出了选择。他们都不知道这个选择意味着什么。他们只是在各自的理解范围内，给出了自己认为最正确的判断。</p>
+
+    <p>二十八年后，他们见面的地方是一间留置室。</p>
+
+    <p>欧·亨利写过很多种相遇。老朋友在咖啡馆重逢，夫妻在圣诞夜互赠礼物，骗子在火车上认出彼此。他没有写过的，是两个老同学在留置室的对视——一个坐在审讯位，一个坐在被审位，中间隔着一层防弹玻璃，玻璃擦得很干净，干净到几乎可以忽略。</p>
+
+  </div>
+</section>
+
+<div class="glass-motif reveal">
+  <p style="font-size:var(--text-base);">忽略玻璃是危险的。</p>
+  <p style="font-size:var(--text-sm);margin-top:0.5rem;">因为玻璃一直都在。</p>
+</div>
+
+<section class="chapter reveal">
+  <div class="chapter-body">
+
+    <p>三十年。玻璃那头的人变成了罪犯，玻璃这头的人在最后一刻发现自己离那头可能只差一步——或许更少，只差一行铅笔字和一个没有写明的日期。</p>
+
+    <p>一个学 <code class="path-code path-0301">0301</code> 的，一个学 <code class="path-code path-0308">0308</code> 的。</p>
+
+    <p>谁赢了？</p>
+
+    <p style="text-indent:0;text-align:center;font-weight:500;">谁也没赢。</p>
+
+    <p>谁输了？</p>
+
+    <p style="text-indent:0;text-align:center;font-weight:500;">也未必输了。</p>
+
+    <p>两个被同一个时代选中又被同一个时代碾过的年轻人，在同一个岔路口分了手，走了半辈子，最终被证明——</p>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     CODA
+     ========================================================= -->
+<div id="coda" class="reveal">
+  <div class="coda-final">案卷封存</div>
+  <div class="coda-lines">
+    <p>他们从来就在同一个闭环里。</p>
+  </div>
+  <div class="final-seal">归档 · 不予再审</div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:0.625rem;letter-spacing:0.15em;color:var(--ink-muted);margin-top:var(--space-md);">
+    案件编号 2107233-CL-2025-JC-003<span style="margin:0 1em;">|</span>归档日期 2054 年 12 月
+  </div>
+</div>
+
+<!-- =========================================================
+     MEMORANDUM
+     ========================================================= -->
+<div id="memorandum" class="reveal">
+  <h2>创作备忘录</h2>
+
+  <h3>人物</h3>
+  <p>李默（0301 宪行 → 知识产权法官 → 提前退休）、王哲（0308 纪检监察学 → 省纪委审理室主任 → 无期徒刑）</p>
+
+  <h3>综合来源</h3>
+  <ul>
+    <li>豆包版：双线腐败与留置室对峙的核心结构，“暂不发出”的抽屉材料设定，李默 / 王哲角色名</li>
+    <li>Gemini 版：0308 培养方案的制度断层（课程空白、法考困难、导师流失），纪检系统考公路径的真实描述</li>
+    <li>Claude 原版：诙谐与冷峻交替的叙事语调，“两条路宽度不同”的结构性隐喻，“窗户是否关紧”的意象</li>
+    <li>GPT 版：2042 年学科年会场景、“成功的标志是什么”的哲学追问，以及“两种人问两种不同问题”的终局判断（已融入李默角色）</li>
+  </ul>
+
+  <h3>事实修正</h3>
+  <ul>
+    <li>更正了豆包版“开除党籍提行政诉讼”的错误，改为监察立案 → 留置 → 审查起诉的标准程序</li>
+    <li>明确法考资格：纪检本科（030108TK）属于 0301 法学类，本科阶段即可报考法考，与硕士读什么无关</li>
+    <li>0308 硕士考公时专业代码是否被认可，各省口径不统一，这个细节已融入王哲的职场路径（走的是纪委系统内部专项通道，而非普通省考）</li>
+    <li>留置室见面设定为审讯最后一天，监控关闭，由专案组组长默许——这个安排更符合审讯实务中的“攻心”策略</li>
+  </ul>
+
+  <h3>欧·亨利式设计</h3>
+  <ul>
+    <li><strong>表层反转</strong>：被审讯的王哲，保险柜里存着审讯者李默的黑材料——他本可以用来交换减刑，但没有用。“暂不发出。先观察。”这句话是全篇的铰链——它到底是什么意思，李默永远不会知道了</li>
+    <li><strong>深层反转</strong>：不是谁赢了谁输了，而是两个人都在不知情的情况下走进了同一个闭环。李默在最后一刻意识到自己离玻璃那一侧只差一行铅笔字——这个醒悟恰恰发生在她以审判者姿态审问王哲的时候</li>
+    <li><strong>真正的欧·亨利</strong>：不在于情节的意外，而在于读者和人物同时意识到——三十年前的分岔路原来是个错觉</li>
+  </ul>
+
+  <h3>制度注解</h3>
+  <ul>
+    <li>纪检监察本科（030108TK）：2021 年入本科目录，归属 0301 法学类，授予法学学士学位，具备法考报名资格</li>
+    <li>纪检监察学硕士（0308）：2022 年成为法学门类下一级学科，与 0301 法学平行，授予法学硕士学位</li>
+    <li>法考资格判断看本科专业代码（是否属于 0301 法学类，依据 2026 年法考公告，仅有法学类 12 个专业能够法考）。</li>
+    <li>部分省份公务员招录中，0308 能否被视为“法学”尚无统一口径；纪委系统的专项选调生通道相对宽松</li>
+    <li>知识产权本科（030102T）：2012 年入目录，归属 0301 法学类；知识产权专硕代码为 035400</li>
+    <li>宪法与行政法学（030103）：始终在 0301 法学一级学科下，法考与考公路径最为通畅</li>
+  </ul>
+</div>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="reveal">
+  <div class="codes">
+    <span class="code-0301">0301</span> <span style="color:var(--ink-muted);">·</span> <span class="code-0308">0308</span>
+  </div>
+  <p>虚构作品 · 人名地名纯属巧合 · 制度细节均经核实</p>
+  <p style="margin-top:0.5rem;">一个观察中国社会的作家手记 · 2027</p>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  const loadingScreen = document.getElementById('loading-screen');
+  window.addEventListener('load', () => {
+    setTimeout(() => { loadingScreen.classList.add('hidden'); }, 600);
+  });
+  setTimeout(() => {
+    if (!loadingScreen.classList.contains('hidden')) loadingScreen.classList.add('hidden');
+  }, 2000);
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  const topBar = document.getElementById('top-bar');
+  const progressLabel = document.getElementById('top-bar-progress');
+  let topBarVisible = false;
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const heroHeight = document.getElementById('hero').offsetHeight;
+
+    if (scrollY > heroHeight * 0.7 && !topBarVisible) {
+      topBar.classList.add('expanded');
+      topBarVisible = true;
+    } else if (scrollY <= heroHeight * 0.7 && topBarVisible) {
+      topBar.classList.remove('expanded');
+      topBarVisible = false;
+    }
+
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? Math.min((scrollY / docHeight) * 100, 100) : 0;
+    document.getElementById('progress-bar').style.width = progress + '%';
+    if (topBarVisible) progressLabel.textContent = Math.round(progress) + '%';
+  });
+
+})();
+</script>
+
+</body>
+</html>
